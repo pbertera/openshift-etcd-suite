@@ -437,6 +437,17 @@ space_check() {
     fi
 }
 
+defrag_solution() {
+    echo -e "SOLUTION: See https://access.redhat.com/solutions/5564771"
+}
+
+defrag_check() {
+    echo -e "[ETCD DEFRAG NEEDED]"
+    cat $MUST_PATH/*/etcd_info/endpoint_status.json  | jq -r '.[] | "Endpoint: " + (.Endpoint) + " ratio: " +((100-(100*.Status.dbSizeInUse/.Status.dbSize)|round) | tostring) + "%"'
+    echo -e ""
+    echo -e "If DbSize ratio exceed 30% consider an etcd defrag"
+    defrag_solution
+}
 
 leader_solution() {
     echo -e ""
@@ -485,7 +496,7 @@ ntp_check
 # heart_check
 space_check
 leader_check
-
+defrag_check
 
 echo -e ""
 echo -e "[NETWORKING]"
